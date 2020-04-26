@@ -112,8 +112,8 @@ window.onload = () => {
         draw(){
             ctx.save();
             ctx.fillStyle = "#ff0000";
-            for(let i=0; i < this.body.length; i++){
-                drawBlock(ctx, this.body[i]);
+            for(const block of this.body){
+                drawBlock(ctx, block);
             }
             ctx.restore();
         }
@@ -176,8 +176,8 @@ window.onload = () => {
             if (isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls){
                 wallCollision = true;
             } else {
-                for (let i=0; i<rest.length; i++){
-                    if (headSnakeX === rest[i][0] && headSnakeY === rest[i][1]){
+                for (const block of rest){
+                    if (headSnakeX === block[0] && headSnakeY === block[1]){
                         snakeCollision = true;
                         break;
                     }
@@ -229,8 +229,8 @@ window.onload = () => {
         isOnSnake(snakeToCheck){
             let isOnSnake = false;
             
-            for (let i=0;i<snakeToCheck.body.length;i++){
-                if (this.position[0] === snakeToCheck.body[i][0] && this.position[1] === snakeToCheck.body[i][1]){
+            for (const block of snakeToCheck.body){
+                if (this.position[0] === block[0] && this.position[1] === block[1]){
                     isOnSnake = true;
                     break;
                 }
