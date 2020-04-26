@@ -33,7 +33,7 @@ window.onload = () => {
     const launch = () => {
         if (launchToDo){
             launchToDo = false;
-            snakee = new Snake([[6,4],[5,4],[4,4],[3,4],[2,4]], "right");
+            snakee = new Snake("right", [6,4],[5,4],[4,4],[3,4],[2,4]);
             applee = new Apple();
             score = 0;
             delay = 100;
@@ -103,7 +103,7 @@ window.onload = () => {
 
     class Snake {
         
-        constructor(body, direction){
+        constructor(direction, ...body){
             this.body = body;
             this.direction = direction;
             this.ateApple = false;
