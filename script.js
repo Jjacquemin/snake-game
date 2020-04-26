@@ -1,4 +1,4 @@
-window.onload = function(){
+window.onload = () => {
     const canvasWidth = 900;
     const canvasHeight = 600;
     const blockSize = 30;
@@ -19,7 +19,7 @@ window.onload = function(){
     let timeout;
     let launchToDo = true;
 
-    function init(){
+    const init = () => {
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
         canvas.style.border = "30px solid gray";
@@ -28,9 +28,9 @@ window.onload = function(){
         canvas.style.backgroundColor = "#ddd";
         document.body.appendChild(canvas);
         launch();
-    }
+    };
     
-    function launch(){
+    const launch = () => {
         if (launchToDo){
             launchToDo = false;
             snakee = new Snake([[6,4],[5,4],[4,4],[3,4],[2,4]], "right");
@@ -40,9 +40,9 @@ window.onload = function(){
             clearTimeout(timeout);
             refreshCanvas();
         }
-    }
+    };
     
-    function refreshCanvas(){
+    const refreshCanvas = () => {
         snakee.advance();
         if (snakee.checkCollision()){
             gameOver();
@@ -62,9 +62,9 @@ window.onload = function(){
             applee.draw();
             timeout = setTimeout(refreshCanvas,delay);
         }
-    }
+    };
     
-    function gameOver(){
+    const gameOver = () => {
         launchToDo = true;
         ctx.save();
         ctx.font = "bold 70px sans-serif";
@@ -79,13 +79,13 @@ window.onload = function(){
         ctx.strokeText("Appuyer sur la touche Espace pour rejouer", centreX, centreY-120);
         ctx.fillText("Appuyer sur la touche Espace pour rejouer", centreX, centreY-120);
         ctx.restore();
-    }
+    };
     
-    function speedUp(){
+    const speedUp = () => {
         delay /= 2;
-    }
+    };
     
-    function drawScore(){
+    const drawScore = () => {
         ctx.save();
         ctx.font = "bold 200px sans-serif";
         ctx.fillStyle = "gray";
@@ -93,13 +93,13 @@ window.onload = function(){
         ctx.textBaseline = "middle";
         ctx.fillText(score.toString(), centreX, centreY);
         ctx.restore();
-    }
+    };
     
-    function drawBlock(ctx, position){
+    const drawBlock = (ctx, position) => {
         const x = position[0] * blockSize;
         const y = position[1] * blockSize;
         ctx.fillRect(x, y, blockSize, blockSize);
-    }
+    };
 
     function Snake(body, direction){
         this.body = body;
@@ -235,7 +235,7 @@ window.onload = function(){
         };
     }
 
-    document.onkeydown = function handleKeyDown(e){
+    document.onkeydown = (e) => {
         const key = e.keyCode;
         let newDirection;
         switch(key){
@@ -259,7 +259,6 @@ window.onload = function(){
         }
         snakee.setDirection(newDirection);
     }
-    
     
     init();
     
