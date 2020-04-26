@@ -12,12 +12,12 @@ window.onload = function(){
     const minY = 0;
     const maxX = widthInBlocks-1;
     const maxY = heightInBlocks-1;
-    let delay = 100;
+    let delay;
     let snakee;
     let applee;
     let score;
     let timeout;
-    let gameOverDetected = false;
+    let launchToDo = true;
 
     function init(){
         canvas.width = canvasWidth;
@@ -27,10 +27,19 @@ window.onload = function(){
         canvas.style.display = "block";
         canvas.style.backgroundColor = "#ddd";
         document.body.appendChild(canvas);
-        snakee = new Snake([[6,4],[5,4],[4,4],[3,4],[2,4]], "right");
-        applee = new Apple([10,10]);
-        score = 0;
-        refreshCanvas();
+        launch();
+    }
+    
+    function launch(){
+        if (launchToDo){
+            launchToDo = false;
+            snakee = new Snake([[6,4],[5,4],[4,4],[3,4],[2,4]], "right");
+            applee = new Apple([10,10]);
+            score = 0;
+            delay = 100;
+            clearTimeout(timeout);
+            refreshCanvas();
+        }
     }
     
     function refreshCanvas(){
@@ -56,7 +65,7 @@ window.onload = function(){
     }
     
     function gameOver(){
-        gameOverDetected = true;
+        launchToDo = true;
         ctx.save();
         ctx.font = "bold 70px sans-serif";
         ctx.fillStyle = "#000";
@@ -70,18 +79,6 @@ window.onload = function(){
         ctx.strokeText("Appuyer sur la touche Espace pour rejouer", centreX, centreY-120);
         ctx.fillText("Appuyer sur la touche Espace pour rejouer", centreX, centreY-120);
         ctx.restore();
-    }
-    
-    function restart(){
-        if (gameOverDetected){
-            gameOverDetected = false;
-            snakee = new Snake([[6,4],[5,4],[4,4],[3,4],[2,4]], "right");
-            applee = new Apple([10,10]);
-            score = 0;
-            delay = 100;
-            clearTimeout(timeout);
-            refreshCanvas();
-        }
     }
     
     function speedUp(){
@@ -255,7 +252,7 @@ window.onload = function(){
                 newDirection = "down";
                 break;
             case 32:
-                restart();
+                launch();
                 return;
             default:
                 return;
