@@ -96,9 +96,8 @@ window.onload = () => {
     };
     
     const drawBlock = (ctx, position) => {
-        const x = position[0] * blockSize;
-        const y = position[1] * blockSize;
-        ctx.fillRect(x, y, blockSize, blockSize);
+        const [x,y] = position;
+        ctx.fillRect(x * blockSize, y * blockSize, blockSize, blockSize);
     };
 
     class Snake {
@@ -164,10 +163,8 @@ window.onload = () => {
         }
     
         checkCollision(){
-            const head = this.body[0];
-            const rest = this.body.slice(1);
-            const headSnakeX = head[0];
-            const headSnakeY = head[1];
+            const [head, ...rest] = this.body
+            const [headSnakeX, headSnakeY] = head
             const isNotBetweenHorizontalWalls = headSnakeX<minX ||headSnakeX>maxX;
             const isNotBetweenVerticalWalls = headSnakeY<minY ||headSnakeY>maxY;
             let wallCollision = false;
