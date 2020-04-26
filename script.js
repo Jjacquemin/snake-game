@@ -101,21 +101,24 @@ window.onload = () => {
         ctx.fillRect(x, y, blockSize, blockSize);
     };
 
-    function Snake(body, direction){
-        this.body = body;
-        this.direction = direction;
-        this.ateApple = false;
+    class Snake {
         
-        this.draw = function(){
+        constructor(body, direction){
+            this.body = body;
+            this.direction = direction;
+            this.ateApple = false;
+        }
+
+        draw(){
             ctx.save();
             ctx.fillStyle = "#ff0000";
             for(let i=0; i < this.body.length; i++){
                 drawBlock(ctx, this.body[i]);
             }
             ctx.restore();
-        };
-        
-        this.advance = function(){
+        }
+
+        advance(){
             const nextHeadPosition = this.body[0].slice(); // pour copier la tête et non faire une référence.
             switch(this.direction){
                 case "left":
@@ -139,9 +142,9 @@ window.onload = () => {
             } else {
                 this.ateApple = false;
             }
-        };
-        
-        this.setDirection = function(newDirection){
+        }
+
+        setDirection(newDirection){
             let allowedDirections;
             switch(this.direction){
                 case "left":
@@ -158,9 +161,9 @@ window.onload = () => {
             if (allowedDirections.indexOf(newDirection) > -1){
                 this.direction = newDirection;
             }
-        };
-        
-        this.checkCollision = function(){
+        }
+    
+        checkCollision(){
             const head = this.body[0];
             const rest = this.body.slice(1);
             const headSnakeX = head[0];
@@ -182,20 +185,23 @@ window.onload = () => {
             }
             
             return wallCollision || snakeCollision;
-        };
+        }
 
-        this.isEatingApple = function(appleToEat){
+        isEatingApple(appleToEat){
             const head = this.body[0];
             
             return (head[0] === appleToEat.position[0] && head[1] === appleToEat.position[1]);
-        };
+        }
 
     }
 
-    function Apple(position){
-        this.position = position;
+    class Apple {
         
-        this.draw = function(){
+        constructor(position){
+            this.position = position;
+        }
+
+        draw(){
             const radius = blockSize/2;
             const x= this.position[0]*blockSize + radius;
             const y= this.position[1]*blockSize + radius;
@@ -205,9 +211,9 @@ window.onload = () => {
             ctx.arc(x,y,radius,0,Math.PI*2,true);
             ctx.fill();
             ctx.restore();
-        };
+        }
 
-        this.setNewPosition = function(){
+        setNewPosition(){
             
             let newX;
             let newY;
@@ -218,9 +224,9 @@ window.onload = () => {
                 this.position = [newX,newY];
             }
             while(this.isOnSnake(snakee))
-        };
+        }
         
-        this.isOnSnake = function(snakeToCheck){
+        isOnSnake(snakeToCheck){
             let isOnSnake = false;
             
             for (let i=0;i<snakeToCheck.body.length;i++){
@@ -232,7 +238,8 @@ window.onload = () => {
             
             return isOnSnake;
                     
-        };
+        }
+
     }
 
     document.onkeydown = (e) => {
