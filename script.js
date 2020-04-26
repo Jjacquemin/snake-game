@@ -7,6 +7,8 @@ window.onload = function(){
     var delay = 100;
     var snakee;
     var applee;
+    var widthInBlocks = canvasWidth/blockSize;
+    var heightInBlocks = canvasHeight/blockSize;
 
     function init(){
         canvas = document.createElement('canvas');
@@ -21,11 +23,15 @@ window.onload = function(){
     }
     
     function refreshCanvas(){
-        ctx.clearRect(0,0,canvasWidth,canvasHeight);
         snakee.advance();
-        snakee.draw();
-        applee.draw();
-        setTimeout(refreshCanvas,delay);
+        if (snakee.checkCollision()){
+            //Game Over
+        } else {
+            ctx.clearRect(0,0,canvasWidth,canvasHeight);
+            snakee.draw();
+            applee.draw();
+            setTimeout(refreshCanvas,delay);
+        }
     }
     
     function drawBlock(ctx, position){
@@ -87,6 +93,37 @@ window.onload = function(){
                 this.direction = newDirection;
             }
         };
+        
+        this.checkCollision = function(){
+            var wallCollision = false;
+            var snakeCollision = false;
+            
+            var head = this.body[0];
+            var rest = this.body.slice(1);
+            var headSnakeX = head[0];
+            var headSnakeY = head[1];
+            var minX = 0;
+            var minY = 0;
+            var maxX = widthInBlocks-1;
+            var maxY = heightInBlocks-1;
+
+            var isNotBetweenHorizontalWalls = headSnakeX<minX ||headSnakeX>maxX;
+            var isNotBetweenVerticalWalls = headSnakeY<minY ||headSnakeY>maxY;
+            
+            if (isNotBetweenHorizontalWalls || isNotBetweenVerticalWalls){
+                wallCollision = true;
+            } else {
+                for (var i=0; i<rest.length; i++){
+                    if (headSnakeX === rest[i][0] && headSnakeY === rest[i][1]){
+                        snakeCollision = true;
+                        break;
+                    }
+                }
+            }
+            
+            return wallCollision || snakeCollision;
+        };
+
     }
 
     function Apple(position){
