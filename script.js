@@ -39,6 +39,9 @@ window.onload = function(){
                 score++;
                 snakee.ateApple = true;
                 applee.setNewPosition();
+                if (score % 5 === 0) {
+                    speedUp()
+                }
             }
             ctx.clearRect(0,0,canvasWidth,canvasHeight);
             drawScore();
@@ -73,9 +76,14 @@ window.onload = function(){
             snakee = new Snake([[6,4],[5,4],[4,4],[3,4],[2,4]], "right");
             applee = new Apple([10,10]);
             score = 0;
+            delay = 100;
             clearTimeout(timeout);
             refreshCanvas();
         }
+    }
+    
+    function speedUp(){
+        delay /= 2;
     }
     
     function drawScore(){
