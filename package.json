@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/Jjacquemin/snake-game.git"
   },
-  "author": "",
+  "author": "Joachim JACQUEMIN",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Jjacquemin/snake-game/issues"
