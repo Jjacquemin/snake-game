@@ -28,5 +28,8 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
+  },
+  "dependencies": {
+    "babel-polyfill": "6.26.0"
   }
 }

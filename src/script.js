@@ -1,3 +1,4 @@
+import "babel-polyfill";
 import Game from "./game.js";
 
 window.onload = () => {
