@@ -1,5 +1,5 @@
 {
-  "name": "snake-game",
+  "name": "@Jjacquemin/snake-game",
   "version": "1.0.0",
   "description": "Le projet de mise en place d'un jeu de serpent en Javascript.",
   "main": "script.js",
