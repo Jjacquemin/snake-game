@@ -1,72 +1,79 @@
 window.onload = () => {
-    const canvasWidth = 900;
-    const canvasHeight = 600;
-    const blockSize = 30;
-    const canvas= document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const widthInBlocks = canvasWidth/blockSize;
-    const heightInBlocks = canvasHeight/blockSize;
-    const centreX = canvasWidth/2;
-    const centreY = canvasHeight/2;
-    const minX = 0;
-    const minY = 0;
-    const maxX = widthInBlocks-1;
-    const maxY = heightInBlocks-1;
-    let delay;
-    let snakee;
-    let applee;
-    let score;
-    let timeout;
-    let launchToDo = true;
 
-    const init = () => {
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-        canvas.style.border = "30px solid gray";
-        canvas.style.margin = "50px auto";
-        canvas.style.display = "block";
-        canvas.style.backgroundColor = "#ddd";
-        document.body.appendChild(canvas);
-        launch();
-    };
-    
-    const launch = () => {
-        if (launchToDo){
-            launchToDo = false;
-            snakee = new Snake("right", [6,4],[5,4],[4,4],[3,4],[2,4]);
-            applee = new Apple();
-            score = 0;
-            delay = 100;
-            clearTimeout(timeout);
-            refreshCanvas();
+    class Game {
+        
+        constructor(canvasWidth = 900, canvasHeight = 600){
+            this.canvasWidth = canvasWidth;
+            this.canvasHeight = canvasHeight;
+            this.blockSize = 30;
+            this.canvas= document.createElement('canvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.widthInBlocks = this.canvasWidth/this.blockSize;
+            this.heightInBlocks = this.canvasHeight/this.blockSize;
+            this.centreX = this.canvasWidth/2;
+            this.centreY = this.canvasHeight/2;
+            this.minX = 0;
+            this.minY = 0;
+            this.maxX = this.widthInBlocks-1;
+            this.maxY = this.heightInBlocks-1;
+            this.delay = 100;
+            this.snakee = null;
+            this.applee = null;
+            this.score = 0;
+            this.timeout = null;
+            this.launchToDo = true;
         }
-    };
+
+        init(){
+            this.canvas.width = this.canvasWidth;
+            this.canvas.height = this.canvasHeight;
+            this.canvas.style.border = "30px solid gray";
+            this.canvas.style.margin = "50px auto";
+            this.canvas.style.display = "block";
+            this.canvas.style.backgroundColor = "#ddd";
+            document.body.appendChild(this.canvas);
+            this.launch();
+        }
     
-    const refreshCanvas = () => {
-        snakee.advance();
-        if (snakee.checkCollision()){
-            Drawing.gameOver(ctx, centreX, centreY, launchToDo);
-        } else {
-            if (snakee.isEatingApple(applee)) {
-                //Le serpent a mangé la pomme
-                score++;
-                snakee.ateApple = true;
-                applee.setNewPosition();
-                if (score % 5 === 0) {
-                    speedUp()
-                }
+        launch(){
+            if (this.launchToDo){
+                this.launchToDo = false;
+                this.snakee = new Snake("right", [6,4],[5,4],[4,4],[3,4],[2,4]);
+                this.applee = new Apple();
+                this.score = 0;
+                this.delay = 100;
+                clearTimeout(this.timeout);
+                this.refreshCanvas();
             }
-            ctx.clearRect(0,0,canvasWidth,canvasHeight);
-            Drawing.drawScore(ctx,centreX,centreY,score);
-            Drawing.drawSnake(ctx, snakee, blockSize);
-            Drawing.drawApple(ctx, applee, blockSize);
-            timeout = setTimeout(refreshCanvas,delay);
         }
-    };
     
-    const speedUp = () => {
-        delay /= 2;
-    };
+        refreshCanvas(){
+            this.snakee.advance();
+            if (this.snakee.checkCollision(this.minX,this.maxX,this.minY,this.maxY)){
+                Drawing.gameOver(this);
+            } else {
+                if (this.snakee.isEatingApple(this.applee)) {
+                    //Le serpent a mangé la pomme
+                    this.score++;
+                    this.snakee.ateApple = true;
+                    this.applee.setNewPosition(this.snakee, this.widthInBlocks, this.heightInBlocks);
+                    if (this.score % 5 === 0) {
+                        this.speedUp()
+                    }
+                }
+                this.ctx.clearRect(0,0,this.canvasWidth,this.canvasHeight);
+                Drawing.drawScore(this.ctx,this.centreX,this.centreY,this.score);
+                Drawing.drawSnake(this.ctx, this.snakee, this.blockSize);
+                Drawing.drawApple(this.ctx, this.applee, this.blockSize);
+                this.timeout = setTimeout(this.refreshCanvas.bind(this),this.delay);
+            }
+        }
+    
+        speedUp() {
+            this.delay /= 2;
+        }
+
+    }
     
     class Snake {
         
@@ -121,7 +128,7 @@ window.onload = () => {
             }
         }
     
-        checkCollision(){
+        checkCollision(minX,maxX,minY,maxY){
             const [head, ...rest] = this.body
             const [headSnakeX, headSnakeY] = head
             const isNotBetweenHorizontalWalls = headSnakeX<minX ||headSnakeX>maxX;
@@ -157,7 +164,7 @@ window.onload = () => {
             this.position = position;
         }
 
-        setNewPosition(){
+        setNewPosition(snake, widthInBlocks, heightInBlocks){
             
             let newX;
             let newY;
@@ -167,7 +174,7 @@ window.onload = () => {
                 newY = Math.round(Math.random() * (heightInBlocks-1));
                 this.position = [newX,newY];
             }
-            while(this.isOnSnake(snakee))
+            while(this.isOnSnake(snake))
         }
         
         isOnSnake(snakeToCheck){
@@ -188,21 +195,21 @@ window.onload = () => {
         
     class Drawing {
 
-        static gameOver(ctx, centreX, centreY, lauchToDo) {
-            launchToDo = true;
-            ctx.save();
-            ctx.font = "bold 70px sans-serif";
-            ctx.fillStyle = "#000";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.strokeStyle = "white";
-            ctx.lineWidth = 5;
-            ctx.strokeText("Game Over", centreX, centreY-180);
-            ctx.fillText("Game Over", centreX, centreY-180);
-            ctx.font = "bold 30px sans-serif";
-            ctx.strokeText("Appuyer sur la touche Espace pour rejouer", centreX, centreY-120);
-            ctx.fillText("Appuyer sur la touche Espace pour rejouer", centreX, centreY-120);
-            ctx.restore();
+        static gameOver(game) {
+            game.launchToDo = true;
+            game.ctx.save();
+            game.ctx.font = "bold 70px sans-serif";
+            game.ctx.fillStyle = "#000";
+            game.ctx.textAlign = "center";
+            game.ctx.textBaseline = "middle";
+            game.ctx.strokeStyle = "white";
+            game.ctx.lineWidth = 5;
+            game.ctx.strokeText("Game Over", game.centreX, game.centreY-180);
+            game.ctx.fillText("Game Over", game.centreX, game.centreY-180);
+            game.ctx.font = "bold 30px sans-serif";
+            game.ctx.strokeText("Appuyer sur la touche Espace pour rejouer", game.centreX, game.centreY-120);
+            game.ctx.fillText("Appuyer sur la touche Espace pour rejouer", game.centreX, game.centreY-120);
+            game.ctx.restore();
         }
         
         static drawScore(ctx, centreX, centreY, score){
@@ -243,6 +250,9 @@ window.onload = () => {
         
     }
 
+    const snakeGame = new Game();
+    snakeGame.init();
+    
     document.onkeydown = (e) => {
         const key = e.keyCode;
         let newDirection;
@@ -260,14 +270,12 @@ window.onload = () => {
                 newDirection = "down";
                 break;
             case 32:
-                launch();
+                snakeGame.launch();
                 return;
             default:
                 return;
         }
-        snakee.setDirection(newDirection);
+        snakeGame.snakee.setDirection(newDirection);
     }
-    
-    init();
     
 }
